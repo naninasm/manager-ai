@@ -1,0 +1,405 @@
+<template>
+  <div class="home-container">
+    <header class="navbar">
+      <div class="nav-brand">
+        <img src="/ThreeG.png" alt="Logo" class="logo" />
+        <span class="brand-name">管理员控制台</span>
+      </div>
+      <nav class="nav-links">
+        <div v-if="isAdminLoggedIn" class="admin-info">
+          <span class="welcome-text">欢迎回来，{{ adminInfo.username }}</span>
+          <button @click="logout" class="nav-btn logout-btn">退出登录</button>
+        </div>
+        <button v-else @click="goToAdminLogin" class="nav-btn admin-btn">管理员登录</button>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <div class="hero-section">
+        <h1 class="hero-title">管理员控制台</h1>
+        <p class="hero-subtitle">系统管理 · 用户管理 · 数据统计</p>
+        
+        <div class="admin-features">
+          <div class="feature-card clickable" @click="goToUserManagement">
+            <div class="card-icon">👥</div>
+            <h3>用户管理</h3>
+            <p>管理系统中的所有用户账号、权限分配</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="card-icon">📊</div>
+            <h3>数据统计</h3>
+            <p>查看系统使用情况、用户活跃度等统计信息</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="card-icon">⚙️</div>
+            <h3>系统设置</h3>
+            <p>系统配置管理、维护操作、日志查看</p>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button v-if="!isAdminLoggedIn" @click="goToAdminLogin" class="cta-btn primary">
+            进入管理后台
+          </button>
+          <div v-else class="admin-actions">
+            <button @click="goToUserManagement" class="cta-btn primary">用户管理</button>
+            <button @click="goToDataStats" class="cta-btn secondary">数据统计</button>
+            <button @click="goToSystemSettings" class="cta-btn secondary">系统设置</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useTokenStore } from '@/stores/token.js'
+
+const router = useRouter()
+const tokenStore = useTokenStore()
+
+const isAdminLoggedIn = ref(false)
+const adminInfo = ref(null)
+
+// 检查管理员登录状态
+const checkAdminStatus = () => {
+  const storedAdminInfo = localStorage.getItem('adminInfo')
+  if (storedAdminInfo) {
+    try {
+      adminInfo.value = JSON.parse(storedAdminInfo)
+      isAdminLoggedIn.value = true
+      console.log('✅ 管理员已登录:', adminInfo.value)
+    } catch (error) {
+      console.error('❌ 解析管理员信息失败:', error)
+      isAdminLoggedIn.value = false
+    }
+  } else {
+    isAdminLoggedIn.value = false
+  }
+}
+
+const goToAdminLogin = () => {
+  router.push('/admin/login')
+}
+
+const logout = () => {
+  // 清除本地存储
+  localStorage.removeItem('adminInfo')
+  localStorage.removeItem('token')
+  localStorage.removeItem('needsLoginCleanup') // 清除可能残留的标记
+  tokenStore.removeToke()
+  
+  // 更新状态
+  isAdminLoggedIn.value = false
+  adminInfo.value = null
+  
+  console.log('🚪 管理员已退出登录')
+  
+  // 可选：显示退出成功消息
+  alert('已成功退出登录')
+}
+
+// 管理功能导航
+const goToUserManagement = () => {
+  console.log('🧑‍💼 进入用户管理')
+  router.push('/admin/users')
+}
+
+const goToDataStats = () => {
+  console.log('📊 进入数据统计')
+  // 这里可以导航到数据统计页面或显示统计模块
+}
+
+const goToSystemSettings = () => {
+  console.log('⚙️ 进入系统设置')
+  // 这里可以导航到系统设置页面或显示设置模块
+}
+
+// 组件挂载时检查登录状态
+onMounted(async () => {
+  // 开发者工具：清理所有localStorage数据（仅在开发模式下）
+  if (import.meta.env.DEV) {
+    console.log('🛠️ 开发模式：如需重置登录状态，请在控制台执行: localStorage.clear()')
+    
+    // 检查是否有不需要的数据
+    const needsCleanup = localStorage.getItem('needsLoginCleanup')
+    if (needsCleanup) {
+      console.log('🔄 检测到清理标记，已自动移除')
+      localStorage.removeItem('needsLoginCleanup')
+    }
+  }
+  
+  // 初始化Token
+  try {
+    const { useTokenStore } = await import('@/stores/token.js')
+    const tokenStore = useTokenStore()
+    tokenStore.initToken()
+  } catch (error) {
+    console.warn('⚠️ 初始化Token失败:', error)
+  }
+  
+  // 检查管理员登录状态
+  checkAdminStatus()
+  
+  // 如果没有登录，显示提示
+  if (!isAdminLoggedIn.value) {
+    console.log('👋 欢迎使用管理员控制台！请点击"管理员登录"开始使用')
+  } else {
+    console.log('✅ 欢迎回来！您已经登录为管理员')
+  }
+})
+</script>
+
+<style scoped>
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.admin-btn {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: rgba(231, 76, 60, 0.5);
+}
+
+.admin-btn:hover {
+  background: rgba(231, 76, 60, 0.3);
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.welcome-text {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+}
+
+.logout-btn {
+  background: rgba(255, 152, 0, 0.2);
+  border-color: rgba(255, 152, 0, 0.5);
+}
+
+.logout-btn:hover {
+  background: rgba(255, 152, 0, 0.3);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.hero-section {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 3rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.admin-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.feature-card.clickable {
+  cursor: pointer;
+}
+
+.feature-card.clickable:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta-btn {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cta-btn.primary {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cta-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cta-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cta-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .admin-features {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+</style>
