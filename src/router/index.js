@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 import AdminDashboard from '../views/AdminDashboard.vue'
 import UserManagement from '../views/UserManagement.vue'
+import TestAPI from '../views/TestAPI.vue'
 
 
 
@@ -31,6 +32,17 @@ const router = createRouter({
       name: 'UserManagement',
       component: UserManagement,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/data-stats',
+      name: 'DataStats',
+      component: () => import('../views/DataStats.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/test-api',
+      name: 'TestAPI',
+      component: TestAPI
     },
     {
       path: '/about',

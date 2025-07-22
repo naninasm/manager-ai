@@ -1,42 +1,51 @@
 <template>
-  <div class="admin-login-container">
-    <div class="login-box">
-      <div class="logo-section">
-        <img src="/ThreeG.png" alt="Logo" class="logo" />
-        <h2 class="title">管理员登录</h2>
+  <div class="login-wrapper">
+    <div class="background-pattern"></div>
+    <div class="login-card">
+      <div class="brand-section">
+        <div class="logo-wrapper">
+          <img src="/ThreeG.png" alt="ThreeG Logo" class="brand-logo" />
+        </div>
+        <h1 class="brand-title">ThreeG 管理中心</h1>
+        <p class="brand-subtitle">智慧教育管理系统</p>
       </div>
       
-      <form @submit.prevent="handleLogin" class="login-form">
-        <div class="form-group">
-          <label for="username">管理员账号</label>
+      <form @submit.prevent="handleLogin" class="auth-form">
+        <div class="input-wrapper">
+          <label for="username" class="field-label">用户名</label>
           <input
             id="username"
             v-model="loginForm.username"
             type="text"
-            class="form-input"
-            placeholder="admin"
+            class="field-input"
+            placeholder="请输入管理员用户名"
             required
           />
         </div>
         
-        <div class="form-group">
-          <label for="password">密码</label>
+        <div class="input-wrapper">
+          <label for="password" class="field-label">密码</label>
           <input
             id="password"
             v-model="loginForm.password"
             type="password"
-            class="form-input"
-            placeholder="请输入密码"
+            class="field-input"
+            placeholder="请输入登录密码"
             required
           />
         </div>
         
-        <button type="submit" class="login-btn" :disabled="isLoading">
-          {{ isLoading ? '登录中...' : '登录' }}
+        <button type="submit" class="submit-button" :disabled="isLoading">
+          <span v-if="!isLoading">进入管理后台</span>
+          <span v-else class="loading-text">
+            <span class="spinner"></span>
+            验证中...
+          </span>
         </button>
       </form>
       
-      <div v-if="errorMessage" class="error-message">
+      <div v-if="errorMessage" class="alert-message">
+        <span class="alert-icon">⚠</span>
         {{ errorMessage }}
       </div>
     </div>
@@ -130,117 +139,260 @@ export default {
 </script>
 
 <style scoped>
-.admin-login-container {
+.login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: #0f172a;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-box {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+.background-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(147, 197, 253, 0.1) 0%, transparent 50%);
+  animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 48px 40px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  z-index: 1;
 }
 
-.logo-section {
+.brand-section {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
-.logo {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.logo-wrapper {
+  display: inline-block;
+  padding: 12px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.25);
 }
 
-.title {
-  color: #333;
-  font-size: 24px;
-  font-weight: 600;
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  display: block;
+}
+
+.brand-title {
+  color: #1e293b;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  color: #64748b;
+  font-size: 15px;
   margin: 0;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
   font-weight: 500;
-  color: #555;
+}
+
+.auth-form {
+  margin-bottom: 24px;
+}
+
+.input-wrapper {
+  margin-bottom: 24px;
+}
+
+.field-label {
+  display: block;
+  color: #374151;
   font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.form-input {
-  padding: 12px 16px;
-  border: 2px solid #e1e5e9;
-  border-radius: 8px;
+.field-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  color: #111827;
+  background: #fafafa;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
 }
 
-.form-input:focus {
+.field-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #3b82f6;
+  background: #ffffff;
+  box-shadow: 
+    0 0 0 4px rgba(59, 130, 246, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.login-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.field-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  padding: 14px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-btn:hover:not(:disabled) {
+.submit-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 
+    0 12px 24px rgba(59, 130, 246, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-.login-btn:disabled {
-  opacity: 0.6;
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled {
   cursor: not-allowed;
-  transform: none;
+  opacity: 0.8;
 }
 
-.error-message {
-  color: #e74c3c;
-  text-align: center;
-  padding: 10px;
-  background: #fee;
-  border-radius: 8px;
-  margin-top: 15px;
+.loading-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.alert-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
   font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-icon {
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 480px) {
-  .login-box {
-    padding: 30px 20px;
+  .login-card {
+    margin: 20px;
+    padding: 32px 24px;
+    border-radius: 20px;
   }
   
-  .title {
-    font-size: 20px;
+  .brand-title {
+    font-size: 24px;
   }
+  
+  .field-input {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+  
+  .submit-button {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+}
+
+/* 增加一些微妙的动画效果 */
+.login-card {
+  animation: cardSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.input-wrapper {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.input-wrapper:nth-child(1) { animation-delay: 0.1s; }
+.input-wrapper:nth-child(2) { animation-delay: 0.2s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.submit-button {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  opacity: 0;
 }
 </style>

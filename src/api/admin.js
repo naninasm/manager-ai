@@ -42,13 +42,7 @@ export const deleteUserService = (userId) => {
 
 // 学生管理
 export const getAllStudentsService = (pageNum = 1, pageSize = 10) => {
-    console.log('🔄 调用学生列表API，参数:', { pageNum, pageSize })
-    
-    // 尝试几种不同的请求方式
-    const url = `/students?pageNum=${pageNum}&pageSize=${pageSize}`
-    console.log('📡 请求URL:', url)
-    
-    return request.get(url)
+    return request.get(`/students?pageNum=${pageNum}&pageSize=${pageSize}`)
 }
 
 export const createStudentService = (studentData) => {
@@ -65,26 +59,18 @@ export const deleteStudentService = (studentId) => {
 
 // 教师管理
 export const getAllTeachersService = (pageNum = 1, pageSize = 10) => {
-    console.log('🔄 调用教师列表API，参数:', { pageNum, pageSize })
-    
-    const url = `/teachers?pageNum=${pageNum}&pageSize=${pageSize}`
-    console.log('📡 请求URL:', url)
-    
-    return request.get(url)
+    return request.get(`/teachers?pageNum=${pageNum}&pageSize=${pageSize}`)
 }
 
 export const createTeacherService = (teacherData) => {
-    console.log('🔄 创建教师，数据:', teacherData)
     return request.post('/teachers/create', teacherData)
 }
 
 export const updateTeacherService = (teacherId, teacherData) => {
-    console.log('🔄 更新教师，ID:', teacherId, '数据:', teacherData)
     return request.put(`/teachers/${teacherId}`, teacherData)
 }
 
 export const deleteTeacherService = (teacherId) => {
-    console.log('🔄 删除教师，ID:', teacherId)
     return request.delete(`/teachers/${teacherId}`)
 }
 
@@ -121,4 +107,10 @@ export const backupSystemService = () => {
 
 export const getSystemLogsService = (page = 1, limit = 50) => {
     return request.get(`/admin/logs?page=${page}&limit=${limit}`)
+}
+
+// 大屏统计接口
+// 获取系统使用统计数据（忽略 /api 前缀）
+export const getUsageStatsService = (type = 'daily') => {
+    return request.get(`/dashboard/usage-stats?type=${type}`)
 }

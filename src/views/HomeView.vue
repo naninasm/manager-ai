@@ -1,53 +1,106 @@
 <template>
-  <div class="home-container">
-    <header class="navbar">
-      <div class="nav-brand">
-        <img src="/ThreeG.png" alt="Logo" class="logo" />
-        <span class="brand-name">管理员控制台</span>
-      </div>
-      <nav class="nav-links">
-        <div v-if="isAdminLoggedIn" class="admin-info">
-          <span class="welcome-text">欢迎回来，{{ adminInfo.username }}</span>
-          <button @click="logout" class="nav-btn logout-btn">退出登录</button>
+  <div class="admin-dashboard">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <div class="brand-section">
+          <img src="/ThreeG.png" alt="ThreeG Logo" class="brand-logo" />
+          <div class="brand-info">
+            <h1 class="brand-title">ThreeG Admin</h1>
+            <span class="brand-subtitle">管理控制台</span>
+          </div>
         </div>
-        <button v-else @click="goToAdminLogin" class="nav-btn admin-btn">管理员登录</button>
-      </nav>
+      </div>
+      <div class="header-right">
+        <div v-if="isAdminLoggedIn" class="user-section">
+          <div class="user-info">
+            <div class="user-avatar">{{ adminInfo.username.charAt(0).toUpperCase() }}</div>
+            <div class="user-details">
+              <span class="user-name">{{ adminInfo.username }}</span>
+              <span class="user-role">系统管理员</span>
+            </div>
+          </div>
+          <button @click="logout" class="logout-button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16,17 21,12 16,7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            退出
+          </button>
+        </div>
+        <button v-else @click="goToAdminLogin" class="login-button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10,17 15,12 10,7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          管理员登录
+        </button>
+      </div>
     </header>
 
-    <main class="main-content">
-      <div class="hero-section">
-        <h1 class="hero-title">管理员控制台</h1>
-        <p class="hero-subtitle">系统管理 · 用户管理 · 数据统计</p>
-        
-        <div class="admin-features">
-          <div class="feature-card clickable" @click="goToUserManagement">
-            <div class="card-icon">👥</div>
-            <h3>用户管理</h3>
-            <p>管理系统中的所有用户账号、权限分配</p>
+    <main class="dashboard-main">
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <h2 class="welcome-title">欢迎使用 ThreeG 管理系统</h2>
+          <p class="welcome-desc">高效管理您的教育平台，轻松掌控用户数据与系统运营</p>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item clickable" @click="goToUserManagement">
+          <div class="feature-header">
+            <div class="feature-icon users-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 class="feature-title">用户管理</h3>
           </div>
-          
-          <div class="feature-card">
-            <div class="card-icon">📊</div>
-            <h3>数据统计</h3>
-            <p>查看系统使用情况、用户活跃度等统计信息</p>
-          </div>
-          
-          <div class="feature-card">
-            <div class="card-icon">⚙️</div>
-            <h3>系统设置</h3>
-            <p>系统配置管理、维护操作、日志查看</p>
+          <p class="feature-desc">管理系统用户账号，分配权限，查看用户活动状态</p>
+          <div class="feature-action">
+            <span class="action-text">立即管理</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
           </div>
         </div>
-        
-        <div class="action-buttons">
-          <button v-if="!isAdminLoggedIn" @click="goToAdminLogin" class="cta-btn primary">
-            进入管理后台
-          </button>
-          <div v-else class="admin-actions">
-            <button @click="goToUserManagement" class="cta-btn primary">用户管理</button>
-            <button @click="goToDataStats" class="cta-btn secondary">数据统计</button>
-            <button @click="goToSystemSettings" class="cta-btn secondary">系统设置</button>
+
+        <div class="feature-item clickable" @click="goToDataStats">
+          <div class="feature-header">
+            <div class="feature-icon analytics-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+              </svg>
+            </div>
+            <h3 class="feature-title">数据分析</h3>
           </div>
+          <p class="feature-desc">实时监控系统数据，生成详细报表，洞察平台运营状况</p>
+          <div class="feature-action clickable" @click="goToDataStats">
+            <span class="action-text">查看数据</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="quick-actions" v-if="!isAdminLoggedIn">
+        <div class="actions-content">
+          <h3 class="actions-title">开始管理</h3>
+          <p class="actions-desc">登录管理员账号以访问所有管理功能</p>
+          <button @click="goToAdminLogin" class="primary-action">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10,17 15,12 10,7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            立即登录
+          </button>
         </div>
       </div>
     </main>
@@ -110,8 +163,7 @@ const goToUserManagement = () => {
 }
 
 const goToDataStats = () => {
-  console.log('📊 进入数据统计')
-  // 这里可以导航到数据统计页面或显示统计模块
+  router.push('/admin/data-stats')
 }
 
 const goToSystemSettings = () => {
@@ -155,251 +207,473 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.home-container {
+.admin-dashboard {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.navbar {
+.dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0 32px;
+  height: 80px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.nav-brand {
+.header-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
 }
 
-.logo {
-  width: 40px;
-  height: 40px;
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1;
+}
+
+.brand-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border-radius: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-}
-
-.brand-name {
-  font-size: 1.5rem;
-  font-weight: 600;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
-}
-
-.nav-links {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.nav-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  font-size: 0.9rem;
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.logout-button, .login-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #475569;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  transition: all 0.2s ease;
 }
 
-.nav-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+.logout-button:hover, .login-button:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
   transform: translateY(-1px);
 }
 
-.admin-btn {
-  background: rgba(231, 76, 60, 0.2);
-  border-color: rgba(231, 76, 60, 0.5);
-}
-
-.admin-btn:hover {
-  background: rgba(231, 76, 60, 0.3);
-}
-
-.admin-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.welcome-text {
+.login-button {
+  background: #3b82f6;
   color: white;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  background: rgba(76, 175, 80, 0.2);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-  border-radius: 6px;
+  border-color: #3b82f6;
 }
 
-.logout-btn {
-  background: rgba(255, 152, 0, 0.2);
-  border-color: rgba(255, 152, 0, 0.5);
+.login-button:hover {
+  background: #2563eb;
+  border-color: #2563eb;
 }
 
-.logout-btn:hover {
-  background: rgba(255, 152, 0, 0.3);
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.hero-section {
-  text-align: center;
-  max-width: 1200px;
+.dashboard-main {
+  padding: 32px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 700;
+.welcome-section {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 20px;
+  padding: 48px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-title {
+  font-size: 36px;
+  font-weight: 800;
   color: white;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0 0 12px 0;
+  line-height: 1.2;
 }
 
-.hero-subtitle {
-  font-size: 1.25rem;
+.welcome-desc {
+  font-size: 18px;
   color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  line-height: 1.5;
 }
 
-.admin-features {
+.features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
-.feature-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.feature-item {
+  background: white;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 2rem;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 32px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.feature-item:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
-.feature-card.clickable {
+.feature-item.clickable {
   cursor: pointer;
 }
 
-.feature-card.clickable:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.15);
+.feature-item.clickable:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+  transform: translateY(-4px);
 }
 
-.card-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.feature-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
-.feature-card h3 {
-  color: white;
-  font-size: 1.5rem;
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.users-icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.analytics-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.settings-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.feature-title {
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 1rem;
+  color: #1e293b;
+  margin: 0;
 }
 
-.feature-card p {
-  color: rgba(255, 255, 255, 0.8);
+.feature-desc {
+  color: #64748b;
+  font-size: 16px;
   line-height: 1.6;
+  margin: 0 0 20px 0;
 }
 
-.action-buttons {
+.feature-action {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  align-items: center;
+  gap: 8px;
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.admin-actions {
+.action-text {
+  transition: color 0.2s ease;
+}
+
+.feature-item:hover .action-text {
+  color: #1d4ed8;
+}
+
+.quick-actions {
+  background: white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+}
+
+.actions-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.actions-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.actions-desc {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.primary-action {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
   justify-content: center;
-}
-
-.cta-btn {
-  padding: 1rem 2rem;
+  padding: 14px 28px;
+  background: #3b82f6;
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
+  margin: 0 auto;
 }
 
-.cta-btn.primary {
-  background: white;
-  color: #667eea;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.cta-btn.primary:hover {
+.primary-action:hover {
+  background: #2563eb;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
 }
 
-.cta-btn.secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.cta-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .dashboard-main {
+    padding: 24px;
+  }
+  
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
-  .navbar {
+  .dashboard-header {
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+    height: auto;
+    padding: 16px 24px;
+    gap: 16px;
   }
-
-  .hero-title {
-    font-size: 2.5rem;
+  
+  .brand-section {
+    gap: 12px;
   }
-
-  .hero-subtitle {
-    font-size: 1.1rem;
+  
+  .brand-logo {
+    width: 40px;
+    height: 40px;
   }
-
-  .admin-features {
+  
+  .brand-title {
+    font-size: 20px;
+  }
+  
+  .user-section {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .dashboard-main {
+    padding: 16px;
+  }
+  
+  .welcome-section {
+    padding: 32px 24px;
+    margin-bottom: 24px;
+  }
+  
+  .welcome-title {
+    font-size: 28px;
+  }
+  
+  .welcome-desc {
+    font-size: 16px;
+  }
+  
+  .features-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 16px;
   }
-
-  .action-buttons {
-    flex-direction: column;
-    align-items: center;
+  
+  .feature-item {
+    padding: 24px;
   }
+  
+  .quick-actions {
+    padding: 32px 24px;
+  }
+}
 
-  .cta-btn {
-    width: 100%;
-    max-width: 300px;
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 12px 16px;
+  }
+  
+  .brand-title {
+    font-size: 18px;
+  }
+  
+  .user-info {
+    padding: 6px 12px;
+  }
+  
+  .welcome-section {
+    padding: 24px 16px;
+  }
+  
+  .welcome-title {
+    font-size: 24px;
+  }
+  
+  .feature-item {
+    padding: 20px;
+  }
+  
+  .feature-header {
+    gap: 12px;
+  }
+  
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .feature-title {
+    font-size: 18px;
+  }
+}
+
+/* 动画效果 */
+.feature-item {
+  animation: slideUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.feature-item:nth-child(1) { animation-delay: 0.1s; }
+.feature-item:nth-child(2) { animation-delay: 0.2s; }
+.feature-item:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.welcome-section {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

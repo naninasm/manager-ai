@@ -1,128 +1,142 @@
 <template>
-  <div class="page-wrapper">
-    <div class="logo">
-      <img src="/ThreeG.png" alt="Logo" />
+  <div class="login-page">
+    <div class="hero-section">
+      <div class="brand-area">
+        <img src="/ThreeG.png" alt="ThreeG Logo" class="main-logo" />
+        <h1 class="system-title">ThreeG 智慧教育</h1>
+        <p class="system-desc">连接学生与教师，构建未来教育生态</p>
+      </div>
     </div>
-    <div class="login-container">
-      <div class="card">
-        <div class="card-header">
-          <!-- 只在注册时显示角色选择器 -->
-          <div v-if="change" class="role-selector">
+    
+    <div class="form-section">
+      <div class="form-container">
+        <div class="form-header">
+          <!-- 注册时的角色选择 -->
+          <div v-if="change" class="role-tabs">
             <button
-              :class="{ active: userRole === 'student' }"
+              :class="['role-tab', { selected: userRole === 'student' }]"
               @click="setUserRole('student')"
             >
-              学生
+              <span class="tab-icon">🎓</span>
+              <span class="tab-text">学生</span>
             </button>
             <button
-              :class="{ active: userRole === 'teacher' }"
+              :class="['role-tab', { selected: userRole === 'teacher' }]"
               @click="setUserRole('teacher')"
             >
-              老师
+              <span class="tab-icon">👨‍🏫</span>
+              <span class="tab-text">教师</span>
             </button>
           </div>
           
-          <h2 class="title">
-            {{ change ? `${selectedRoleText}注册` : '用户登录' }}
+          <h2 class="form-title">
+            {{ change ? `${selectedRoleText}账户注册` : '账户登录' }}
           </h2>
-          <p class="subtitle">
+          <p class="form-subtitle">
             {{
               change
-                ? `请填写以下信息完成${selectedRoleText}注册`
-                : '请输入您的账户信息'
+                ? `创建您的${selectedRoleText}账户，开始学习之旅`
+                : '欢迎回来，请登录您的账户'
             }}
           </p>
         </div>
         
-        <form class="login-form" @submit.prevent>
+        <form class="auth-form" @submit.prevent>
           <template v-if="!change">
-            <!-- 登录表单 - 不显示角色选择 -->
-            <div class="form-item">
-              <label for="login-username">账号</label>
+            <!-- 登录表单 -->
+            <div class="field-group">
+              <label for="login-username" class="field-label">学号/工号</label>
               <input
                 id="login-username"
                 v-model="loginform.username"
                 type="text"
-                placeholder="请输入8-11位数字"
+                class="field-input"
+                placeholder="请输入8-11位数字ID"
               />
             </div>
-            <div class="form-item">
-              <label for="login-password">密码</label>
+            <div class="field-group">
+              <label for="login-password" class="field-label">密码</label>
               <input
                 id="login-password"
                 v-model="loginform.password"
                 type="password"
-                placeholder="请输入您的密码"
+                class="field-input"
+                placeholder="请输入您的登录密码"
               />
             </div>
-            <button class="login-btn" type="submit" @click="handleLogin">
-              登 录
+            <button class="primary-button" type="submit" @click="handleLogin">
+              <span class="button-text">登录账户</span>
             </button>
           </template>
           
           <template v-else>
-            <!-- 注册表单 - 保持原有的角色选择功能 -->
-            <div class="form-item">
-              <label for="register-username">账号</label>
+            <!-- 注册表单 -->
+            <div class="field-group">
+              <label for="register-username" class="field-label">学号/工号</label>
               <input
                 id="register-username"
                 v-model="registerform.username"
                 type="text"
-                placeholder="请输入8-11位数字"
+                class="field-input"
+                placeholder="请输入8-11位数字ID"
               />
             </div>
-            <div class="form-item">
-              <label for="register-email">邮箱</label>
+            <div class="field-group">
+              <label for="register-email" class="field-label">邮箱地址</label>
               <input
                 id="register-email"
                 v-model="registerform.email"
                 type="email"
-                placeholder="请输入邮箱"
+                class="field-input"
+                placeholder="example@university.edu"
               />
             </div>
-            <div class="form-item">
-              <label for="register-password">密码</label>
+            <div class="field-group">
+              <label for="register-password" class="field-label">设置密码</label>
               <input
                 id="register-password"
                 v-model="registerform.password"
                 type="password"
-                placeholder="密码需包含大小写字母且长度大于6位"
+                class="field-input"
+                placeholder="至少6位，包含大小写字母"
               />
             </div>
-            <div class="form-item">
-              <label for="register-confirmPassword">确认密码</label>
+            <div class="field-group">
+              <label for="register-confirmPassword" class="field-label">确认密码</label>
               <input
                 id="register-confirmPassword"
                 v-model="registerform.confirmPassword"
                 type="password"
-                placeholder="请再次输入密码"
+                class="field-input"
+                placeholder="请再次输入密码确认"
               />
             </div>
-            <div class="form-item verify-row">
-              <div class="verify-input">
-                <label for="register-code">验证码</label>
+            <div class="verification-group">
+              <div class="field-group verification-input">
+                <label for="register-code" class="field-label">验证码</label>
                 <input
                   id="register-code"
                   v-model="registerform.code"
                   type="text"
-                  placeholder="请输入验证码"
+                  class="field-input"
+                  placeholder="请输入邮箱验证码"
                 />
               </div>
-              <button class="verify-btn" type="button" @click="getVerifyCode">
+              <button class="verification-button" type="button" @click="getVerifyCode">
                 获取验证码
               </button>
             </div>
-            <button class="login-btn" type="submit" @click="handleRegister">
-              注 册
+            <button class="primary-button" type="submit" @click="handleRegister">
+              <span class="button-text">创建账户</span>
             </button>
           </template>
         </form>
         
-        <div class="register-tip">
-          <span>{{ change ? '已有账号？' : '没有账号？' }}</span>
-          <a href="javascript:void(0);" @click="handlechange">
-            {{ change ? '立即登录' : '立即注册' }}
-          </a>
+        <div class="switch-prompt">
+          <span class="prompt-text">{{ change ? '已有账户？' : '还没有账户？' }}</span>
+          <button class="switch-button" @click="handlechange">
+            {{ change ? '立即登录' : '免费注册' }}
+          </button>
         </div>
       </div>
     </div>
@@ -379,235 +393,369 @@ const getVerifyCode = async () => {
 </script>
 
 <style scoped>
-.role-selector {
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  background: #f8fafc;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  position: relative;
   overflow: hidden;
 }
 
-.role-selector button {
-  flex-grow: 1;
-  padding: 10px 15px;
-  background-color: #f8fafc; 
-  color: #5a677b; 
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  outline: none;
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  animation: heroPattern 15s ease-in-out infinite;
 }
 
-.role-selector button:not(:last-child) {
-  border-right: 1px solid #ffffff;
+@keyframes heroPattern {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
 }
 
-.role-selector button.active {
-  background-color: #0ba730; 
-  color: #fff; 
-  font-weight: 600;
-}
-
-.role-selector button:hover:not(.active) {
-  background-color: #e2e8f0; 
-}
-
-/* ...existing styles... (保持其他样式不变) */
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; 
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #fff 100%);
-  padding: 20px;
-  box-sizing: border-box;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  position: relative; 
-}
-
-.logo {
-  position: absolute; 
-  top: 24px;          
-  left: 24px;        
-  z-index: 10;        
-}
-
-.logo img {
-  height: 150px; 
-  width: auto;
-  display: block;
-}
-
-.login-container {
-  display: flex; 
-  justify-content: center;
-  align-items: center;
-  width: 100%; 
-}
-
-.card {
-  max-width: 420px;
-  width: 100%;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07), 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 32px 32px 28px 32px;
-  box-sizing: border-box;
-  transition:
-    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.card:hover,
-.card:focus-within {
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1),  0 8px 20px rgba(0,0,0,0.07);
-  transform: translateY(-6px);
-}
-
-.card-header {
+.brand-area {
   text-align: center;
-  margin-bottom: 28px;
+  color: white;
+  z-index: 1;
+  position: relative;
 }
 
-.title {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 8px;
+.main-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 32px;
+  animation: logoFloat 3s ease-in-out infinite;
 }
 
-.subtitle {
-  font-size: 15px;
-  color: #5a677b;
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.system-title {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.system-desc {
+  font-size: 18px;
+  opacity: 0.9;
   margin: 0;
-  margin-bottom: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+.form-section {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 360px;
+}
+
+.form-header {
+  margin-bottom: 40px;
+}
+
+.role-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 32px;
+}
+
+.role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.role-tab.selected {
+  background: white;
+  color: #1e293b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.tab-icon {
+  font-size: 16px;
+}
+
+.form-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.form-subtitle {
+  color: #64748b;
+  font-size: 16px;
+  margin: 0;
   line-height: 1.4;
 }
 
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.auth-form {
+  margin-bottom: 32px;
 }
 
-.form-item {
-  display: flex;
-  flex-direction: column;
+.field-group {
+  margin-bottom: 24px;
 }
 
-.form-item label {
-  margin-bottom: 8px;
+.field-label {
+  display: block;
   font-size: 14px;
-  font-weight: 500;
-  color: #334155;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
 }
 
-.form-item input {
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 15px;
-  background: #f8fafc;
+.field-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
   color: #1e293b;
+  background: #fafafa;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.field-input:focus {
   outline: none;
-  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.form-item input::placeholder {
-  color: #94a3b8;
-}
-
-.form-item input:focus {
   border-color: #3b82f6;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
 }
 
-.form-item.verify-row {
+.field-input::placeholder {
+  color: #9ca3af;
+}
+
+.verification-group {
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
   gap: 12px;
+  align-items: end;
 }
 
-.form-item.verify-row .verify-input {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+.verification-input {
+  flex: 1;
+  margin-bottom: 0;
 }
 
-.verify-btn {
-  flex-shrink: 0;
-  height: auto;
-  padding: 12px 18px;
+.verification-button {
+  height: 54px;
+  padding: 0 20px;
   background: #10b981;
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.verify-btn:hover {
+.verification-button:hover {
   background: #059669;
+  transform: translateY(-1px);
 }
 
-.login-btn {
-  margin-top: 12px;
+.primary-button {
   width: 100%;
-  padding: 13px 0;
-  background: linear-gradient(95deg, #3b82f6 0%, #2563eb 100%);
-  color: #fff;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-btn:hover {
-  background: linear-gradient(95deg, #2563eb 0%, #1d4ed8 100%);
+.primary-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3);
 }
 
-.login-btn:active {
-  transform: translateY(0px);
-  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.25);
+.primary-button:active {
+  transform: translateY(0);
 }
 
-.register-tip {
+.button-text {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.switch-prompt {
   text-align: center;
-  margin-top: 28px;
-  color: #5a677b;
-  font-size: 14px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.register-tip a {
-  color: #2563eb;
-  text-decoration: none;
-  margin-left: 5px;
+.prompt-text {
+  color: #64748b;
+  font-size: 15px;
+  margin-right: 8px;
+}
+
+.switch-button {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 15px;
   font-weight: 600;
-  transition: color 0.2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
-.register-tip a:hover {
+.switch-button:hover {
   color: #1d4ed8;
   text-decoration: underline;
 }
 
-label[for] {
-  cursor: pointer;
+/* 响应式设计 */
+@media (max-width: 968px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  
+  .hero-section {
+    min-height: 200px;
+    padding: 40px 20px;
+  }
+  
+  .main-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+  }
+  
+  .system-title {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  
+  .system-desc {
+    font-size: 16px;
+  }
+  
+  .form-section {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-section {
+    min-height: 160px;
+    padding: 30px 20px;
+  }
+  
+  .system-title {
+    font-size: 24px;
+  }
+  
+  .system-desc {
+    font-size: 14px;
+  }
+  
+  .form-title {
+    font-size: 24px;
+  }
+  
+  .verification-group {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .verification-button {
+    height: 54px;
+    width: 100%;
+  }
+}
+
+/* 动画效果 */
+.form-container {
+  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field-group {
+  animation: fadeIn 0.6s ease forwards;
+  opacity: 0;
+}
+
+.field-group:nth-child(1) { animation-delay: 0.1s; }
+.field-group:nth-child(2) { animation-delay: 0.2s; }
+.field-group:nth-child(3) { animation-delay: 0.3s; }
+.field-group:nth-child(4) { animation-delay: 0.4s; }
+.field-group:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.primary-button {
+  animation: fadeIn 0.6s ease 0.6s forwards;
+  opacity: 0;
 }
 </style>

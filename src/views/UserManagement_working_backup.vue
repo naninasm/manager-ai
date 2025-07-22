@@ -2,14 +2,6 @@
   <div class="user-management">
     <div class="page-container">
       <div class="page-header">
-        <div class="header-top">
-          <button @click="goToHome" class="back-button">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H6m0 0l7 7m-7-7l7-7"/>
-            </svg>
-            返回主界面
-          </button>
-        </div>
         <div class="breadcrumb">
           <div class="breadcrumb-item">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -35,7 +27,7 @@
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
             学生管理
-            <span class="tab-count">{{ allStudents.length }}</span>
+            <span class="tab-count">{{ students.length }}</span>
           </button>
           <button 
             :class="['tab-button', { active: activeTab === 'teachers' }]"
@@ -45,7 +37,7 @@
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
             </svg>
             教师管理
-            <span class="tab-count">{{ allTeachers.length }}</span>
+            <span class="tab-count">{{ teachers.length }}</span>
           </button>
         </div>
       </div>
@@ -60,7 +52,7 @@
             </div>
             <div class="section-stats">
               <div class="stat-item">
-                <span class="stat-number">{{ allStudents.length }}</span>
+                <span class="stat-number">{{ students.length }}</span>
                 <span class="stat-label">学生总数</span>
               </div>
             </div>
@@ -166,47 +158,6 @@
               </tbody>
             </table>
           </div>
-          
-          <!-- 学生分页控件 -->
-          <div v-if="students.length > 0" class="pagination-container">
-            <div class="pagination-info">
-              <span>共 {{ totalPages }} 页，第 {{ currentPage }} 页，总共 {{ allStudents.length }} 个学生</span>
-            </div>
-            <div class="pagination-controls">
-              <button 
-                @click="changeStudentPage(currentPage - 1)" 
-                :disabled="currentPage <= 1"
-                class="pagination-btn"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15,18 9,12 15,6"></polyline>
-                </svg>
-                上一页
-              </button>
-              
-              <div class="pagination-numbers">
-                <button 
-                  v-for="page in getVisiblePages()" 
-                  :key="page"
-                  @click="changeStudentPage(page)"
-                  :class="['pagination-number', { active: page === currentPage }]"
-                >
-                  {{ page }}
-                </button>
-              </div>
-              
-              <button 
-                @click="changeStudentPage(currentPage + 1)" 
-                :disabled="currentPage >= totalPages"
-                class="pagination-btn"
-              >
-                下一页
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9,18 15,12 9,6"></polyline>
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -220,7 +171,7 @@
             </div>
             <div class="section-stats">
               <div class="stat-item">
-                <span class="stat-number">{{ allTeachers.length }}</span>
+                <span class="stat-number">{{ teachers.length }}</span>
                 <span class="stat-label">教师总数</span>
               </div>
             </div>
@@ -320,47 +271,6 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-          
-          <!-- 教师分页控件 -->
-          <div v-if="teachers.length > 0" class="pagination-container">
-            <div class="pagination-info">
-              <span>共 {{ totalTeacherPages }} 页，第 {{ currentTeacherPage }} 页，总共 {{ allTeachers.length }} 个教师</span>
-            </div>
-            <div class="pagination-controls">
-              <button 
-                @click="changeTeacherPage(currentTeacherPage - 1)" 
-                :disabled="currentTeacherPage <= 1"
-                class="pagination-btn"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15,18 9,12 15,6"></polyline>
-                </svg>
-                上一页
-              </button>
-              
-              <div class="pagination-numbers">
-                <button 
-                  v-for="page in getVisibleTeacherPages()" 
-                  :key="page"
-                  @click="changeTeacherPage(page)"
-                  :class="['pagination-number', { active: page === currentTeacherPage }]"
-                >
-                  {{ page }}
-                </button>
-              </div>
-              
-              <button 
-                @click="changeTeacherPage(currentTeacherPage + 1)" 
-                :disabled="currentTeacherPage >= totalTeacherPages"
-                class="pagination-btn"
-              >
-                下一页
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9,18 15,12 9,6"></polyline>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -650,13 +560,9 @@ const loading = ref(false)
 const saving = ref(false)
 const students = ref([])
 const teachers = ref([])
-const allStudents = ref([]) // 所有学生数据
-const allTeachers = ref([]) // 所有教师数据
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalPages = ref(0)
-const currentTeacherPage = ref(1)
-const totalTeacherPages = ref(0)
 
 // 模态框状态
 const showCreateStudentModal = ref(false)
@@ -703,11 +609,6 @@ const formatDate = (dateString) => {
   }
 }
 
-// 返回主界面
-const goToHome = () => {
-  router.push('/')
-}
-
 // 获取学生列表
 const fetchStudents = async () => {
   console.log('开始获取学生列表')
@@ -739,14 +640,14 @@ const fetchStudents = async () => {
       return
     }
     
-    // 获取学生数据 - 获取所有数据
+    // 获取学生数据 - 请求所有数据
     const response = await request.get('/students', {
       headers: {
         'Authorization': `Bearer ${adminData.token}`
       },
       params: {
-        pageNum: 1,
-        pageSize: 1000  // 设置大的页面大小获取所有数据
+        current: 1,
+        size: 100  // 设置较大的页面大小来获取所有数据
       }
     })
     
@@ -754,20 +655,20 @@ const fetchStudents = async () => {
     const studentsData = response.data?.data?.records || []
     const pagination = response.data?.data || {}
     
-    // 如果数据量很大，可能需要多次请求
+    // 如果还有更多数据，发起额外请求获取所有数据
     if (pagination.total && pagination.total > studentsData.length) {
       const allDataResponse = await request.get('/students', {
         headers: {
           'Authorization': `Bearer ${adminData.token}`
         },
         params: {
-          pageNum: 1,
-          pageSize: pagination.total  // 使用总数作为页面大小
+          current: 1,
+          size: pagination.total  // 使用总数作为页面大小
         }
       })
       const allStudentsData = allDataResponse.data?.data?.records || studentsData
       
-      allStudents.value = allStudentsData.map(student => ({
+      students.value = allStudentsData.map(student => ({
         studentId: student.studentId || '',
         name: student.name || '未知学生',
         gender: student.gender !== undefined ? student.gender : '',
@@ -778,7 +679,7 @@ const fetchStudents = async () => {
         ...student
       }))
     } else {
-      allStudents.value = studentsData.map(student => ({
+      students.value = studentsData.map(student => ({
         studentId: student.studentId || '',
         name: student.name || '未知学生',
         gender: student.gender !== undefined ? student.gender : '',
@@ -790,11 +691,12 @@ const fetchStudents = async () => {
       }))
     }
     
-    // 前端分页处理
-    updateStudentPagination()
+    // 更新分页信息
+    currentPage.value = pagination.current || 1
+    totalPages.value = pagination.pages || 0
     
-    console.log('学生列表获取成功:', allStudents.value)
-    console.log('总共学生数量:', allStudents.value.length)
+    console.log('学生列表获取成功:', students.value)
+    console.log('分页信息:', { current: pagination.current, pages: pagination.pages, total: pagination.total })
   } catch (error) {
     console.error('获取学生列表失败:', error)
     alert('加载学生列表失败，请检查网络连接')
@@ -834,14 +736,14 @@ const fetchTeachers = async () => {
       return
     }
     
-    // 获取教师数据 - 获取所有数据
+    // 获取教师数据 - 请求所有数据
     const response = await request.get('/teachers', {
       headers: {
         'Authorization': `Bearer ${adminData.token}`
       },
       params: {
-        pageNum: 1,
-        pageSize: 1000  // 设置大的页面大小获取所有数据
+        current: 1,
+        size: 100  // 设置较大的页面大小来获取所有数据
       }
     })
     
@@ -849,20 +751,20 @@ const fetchTeachers = async () => {
     const teachersData = response.data?.data?.records || []
     const pagination = response.data?.data || {}
     
-    // 如果数据量很大，可能需要多次请求
+    // 如果还有更多数据，发起额外请求获取所有数据
     if (pagination.total && pagination.total > teachersData.length) {
       const allDataResponse = await request.get('/teachers', {
         headers: {
           'Authorization': `Bearer ${adminData.token}`
         },
         params: {
-          pageNum: 1,
-          pageSize: pagination.total  // 使用总数作为页面大小
+          current: 1,
+          size: pagination.total  // 使用总数作为页面大小
         }
       })
       const allTeachersData = allDataResponse.data?.data?.records || teachersData
       
-      allTeachers.value = allTeachersData.map(teacher => ({
+      teachers.value = allTeachersData.map(teacher => ({
         teacherId: teacher.teacherId || '',
         name: teacher.name || '未知教师',
         gender: teacher.gender !== undefined ? teacher.gender : '',
@@ -872,7 +774,7 @@ const fetchTeachers = async () => {
         ...teacher
       }))
     } else {
-      allTeachers.value = teachersData.map(teacher => ({
+      teachers.value = teachersData.map(teacher => ({
         teacherId: teacher.teacherId || '',
         name: teacher.name || '未知教师',
         gender: teacher.gender !== undefined ? teacher.gender : '',
@@ -883,11 +785,8 @@ const fetchTeachers = async () => {
       }))
     }
     
-    // 前端分页处理
-    updateTeacherPagination()
-    
-    console.log('教师列表获取成功:', allTeachers.value)
-    console.log('总共教师数量:', allTeachers.value.length)
+    console.log('教师列表获取成功:', teachers.value)
+    console.log('分页信息:', { current: pagination.current, pages: pagination.pages, total: pagination.total })
   } catch (error) {
     console.error('获取教师列表失败:', error)
     alert('加载教师列表失败，请检查网络连接')
@@ -896,55 +795,10 @@ const fetchTeachers = async () => {
   }
 }
 
-// 前端分页处理函数
-const updateStudentPagination = () => {
-  const total = allStudents.value.length
-  totalPages.value = Math.ceil(total / pageSize.value)
-  
-  // 确保当前页不超出范围
-  if (currentPage.value > totalPages.value) {
-    currentPage.value = Math.max(1, totalPages.value)
-  }
-  
-  // 计算当前页显示的数据
-  const startIndex = (currentPage.value - 1) * pageSize.value
-  const endIndex = startIndex + pageSize.value
-  students.value = allStudents.value.slice(startIndex, endIndex)
-}
-
-const updateTeacherPagination = () => {
-  const total = allTeachers.value.length
-  totalTeacherPages.value = Math.ceil(total / pageSize.value)
-  
-  // 确保当前页不超出范围
-  if (currentTeacherPage.value > totalTeacherPages.value) {
-    currentTeacherPage.value = Math.max(1, totalTeacherPages.value)
-  }
-  
-  // 计算当前页显示的数据
-  const startIndex = (currentTeacherPage.value - 1) * pageSize.value
-  const endIndex = startIndex + pageSize.value
-  teachers.value = allTeachers.value.slice(startIndex, endIndex)
-}
-
 // 重置学生表单
 const resetStudentForm = () => {
-  // 生成学号：2025开头 + 4位递增数字
-  const generateStudentId = () => {
-    const existingIds = allStudents.value
-      .map(student => student.studentId)
-      .filter(id => id && String(id).startsWith('2025')) // 确保转换为字符串
-      .map(id => parseInt(String(id).substring(4)) || 0) // 确保转换为字符串后再处理
-    
-    const maxNumber = existingIds.length > 0 ? Math.max(...existingIds) : 0
-    const nextNumber = maxNumber + 1
-    const paddedNumber = nextNumber.toString().padStart(4, '0')
-    
-    return `2025${paddedNumber}`
-  }
-  
   studentForm.value = {
-    studentId: generateStudentId(),
+    studentId: '',
     name: '',
     gender: '',
     birthDate: '',
@@ -958,11 +812,8 @@ const resetStudentForm = () => {
 
 // 重置教师表单
 const resetTeacherForm = () => {
-  // 生成一个唯一的教师ID（时间戳）
-  const uniqueId = 'TEA' + Date.now()
-  
   teacherForm.value = {
-    teacherId: uniqueId,
+    teacherId: '',
     name: '',
     gender: '',
     birthDate: '',
@@ -1000,21 +851,13 @@ const saveStudent = async () => {
   try {
     saving.value = true
     
-    // 简单的数据处理，确保性别是数字
-    const studentData = {
-      ...studentForm.value,
-      gender: parseInt(studentForm.value.gender) // 只处理性别字段
-    }
-    
-    console.log('📝 发送学生数据:', studentData)
-    
     if (isEditing.value) {
       // 更新学生
-      await request.put(`/students/${studentForm.value.studentId}`, studentData)
+      await request.put(`/students/${studentForm.value.studentId}`, studentForm.value)
       alert('学生信息更新成功')
     } else {
-      // 创建学生 - 使用正确的创建接口路径
-      await request.post('/students/create', studentData)
+      // 创建学生
+      await request.post('/students', studentForm.value)
       alert('学生添加成功')
     }
     
@@ -1022,8 +865,7 @@ const saveStudent = async () => {
     await fetchStudents()
   } catch (error) {
     console.error('保存学生失败:', error)
-    console.error('详细错误信息:', error.response?.data)
-    alert(`操作失败: ${error.response?.data?.message || error.response?.data?.msg || error.message}`)
+    alert('操作失败，请重试')
   } finally {
     saving.value = false
   }
@@ -1034,21 +876,13 @@ const saveTeacher = async () => {
   try {
     saving.value = true
     
-    // 简单的数据处理，确保性别是数字
-    const teacherData = {
-      ...teacherForm.value,
-      gender: parseInt(teacherForm.value.gender) // 只处理性别字段
-    }
-    
-    console.log('📝 发送教师数据:', teacherData)
-    
     if (isEditing.value) {
       // 更新教师
-      await request.put(`/teachers/${teacherForm.value.teacherId}`, teacherData)
+      await request.put(`/teachers/${teacherForm.value.teacherId}`, teacherForm.value)
       alert('教师信息更新成功')
     } else {
-      // 创建教师 - 使用正确的创建接口路径
-      await request.post('/teachers/create', teacherData)
+      // 创建教师
+      await request.post('/teachers', teacherForm.value)
       alert('教师添加成功')
     }
     
@@ -1056,8 +890,7 @@ const saveTeacher = async () => {
     await fetchTeachers()
   } catch (error) {
     console.error('保存教师失败:', error)
-    console.error('详细错误信息:', error.response?.data)
-    alert(`操作失败: ${error.response?.data?.message || error.response?.data?.msg || error.message}`)
+    alert('操作失败，请重试')
   } finally {
     saving.value = false
   }
@@ -1095,41 +928,6 @@ const deleteTeacher = async (teacherId) => {
   }
 }
 
-// 分页相关函数
-const changeStudentPage = (page) => {
-  if (page < 1 || page > totalPages.value) return
-  currentPage.value = page
-  updateStudentPagination()
-}
-
-const changeTeacherPage = (page) => {
-  if (page < 1 || page > totalTeacherPages.value) return
-  currentTeacherPage.value = page
-  updateTeacherPagination()
-}
-
-const getVisiblePages = () => {
-  const pages = []
-  const start = Math.max(1, currentPage.value - 2)
-  const end = Math.min(totalPages.value, currentPage.value + 2)
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
-}
-
-const getVisibleTeacherPages = () => {
-  const pages = []
-  const start = Math.max(1, currentTeacherPage.value - 2)
-  const end = Math.min(totalTeacherPages.value, currentTeacherPage.value + 2)
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-  return pages
-}
-
 // 组件挂载时获取数据
 onMounted(() => {
   fetchStudents()
@@ -1141,7 +939,7 @@ onMounted(() => {
 /* 主容器 */
 .user-management {
   padding: 2rem;
-  background: #ffffff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
 }
 
@@ -1157,32 +955,6 @@ onMounted(() => {
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-}
-
-.header-top {
-  margin-bottom: 1.5rem;
-}
-
-.back-button {
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  color: #64748b;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-}
-
-.back-button:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
-  color: #475569;
-  transform: translateX(-2px);
 }
 
 .page-title {
@@ -1777,83 +1549,6 @@ onMounted(() => {
   background: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-}
-
-/* 分页样式 */
-.pagination-container {
-  padding: 1.5rem 2rem;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pagination-info {
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.pagination-btn {
-  padding: 0.5rem 1rem;
-  border: 2px solid #e5e7eb;
-  background: white;
-  color: #64748b;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.pagination-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination-numbers {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.pagination-number {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #e5e7eb;
-  background: white;
-  color: #64748b;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.pagination-number:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.pagination-number.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
 }
 
 /* 响应式设计 */
